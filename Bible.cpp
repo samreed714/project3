@@ -39,7 +39,7 @@ void Bible::generateMap() {
 		/* Get the file position at beginning of line */
 		position = stream.tellg();
 		/* put Ref into map*/
-		mp.insert({ currentRef, position });
+		mp.insert({ currentRef, position - line.length() - 1});
 	}
 	cout << "\ngenerated map containing " << mp.size() << " references\n";
 	cout << "last byte offset: " << mp[currentRef] << endl;
@@ -56,16 +56,29 @@ Verse Bible::lookup(Ref ref, LookupResult& status) {
 	if (!stream.is_open()) {
 		stream.open(infile, ios::in);
 	}
+
     // TODO: scan the file to retrieve the line that holds ref ...
-	string line;
+	string line = "error";
 	int pos = mp[ref];
-	cout << "looking up pos" << pos << endl;
-	stream.seekg(4279207);
+	stream.seekg(pos);
+
     // update the status variable
-	status = OTHER; // placeholder until retrieval is attempted
-	if (getline(stream, line)) {
-		status == SUCCESS;
+	status = SUCCESS; // default
+	getline(stream, line);
+	
+	// error checking
+	Ref genesis1_1 = Ref(1, 1, 1);
+	if (ref != genesis1_1) {
+		if (mp[ref] == 0) {
+			status = NO_CHAPTER;
+			Ref refErr = Ref(ref.getBook(), ref.getChap(), 1);
+			if (mp[refErr] != 0) {
+				status = NO_VERSE;
+			}
+		}
 	}
+
+
 	// create and return the verse object
 	Verse aVerse;   // default verse, to be replaced by a Verse object
 	                // that is constructed from a line in the file.
@@ -78,20 +91,22 @@ Verse Bible::lookup(Ref ref, LookupResult& status) {
 Verse Bible::nextVerse(Ref ref, LookupResult& status) {
 	string line;
 	Ref currentRef;
-	//if the end of the file has not been reached, return the next verse
-	getline(stream, line);
-	currentRef = Ref(line);
-	//print name of new book
-	if (currentRef.getBook() > ref.getBook()) {
-		cout << endl;
-		currentRef.display();
-		cout << endl;
+	isOpen = stream.is_open();
+	if (isOpen) {
+		//if the end of the file has not been reached, return the next verse
+		getline(stream, line);
+		currentRef = Ref(line);
+		//print name of new book
+		if (currentRef.getBook() > ref.getBook()) {
+			cout << endl;
+			currentRef.display();
+			cout << endl;
+		}
+		//print name of new chapter
+		if (currentRef.getVerse() == 1 && currentRef.getBook() == ref.getBook()) {
+			cout << "\nChapter " << currentRef.getChap() << endl;
+		}
 	}
-	//print name of new chapter
-	if (currentRef.getVerse() == 1 && currentRef.getBook() == ref.getBook()) {
-		cout << "\nChapter " << currentRef.getChap() << endl;
-	}
-	
 	else {
 		//If the end of the file has been reached, start at the beginning
 		currentRef = Ref(1, 1, 1);

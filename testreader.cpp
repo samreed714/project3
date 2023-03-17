@@ -49,17 +49,18 @@ int main (int argc, char **argv) {
 	cout << ":" << ref.getVerse();
 	
 	verse = webBible.lookup(ref, result);
-	cout << endl << "Result status: " << result << endl;
-	
+	cout << "Result status: " << result << endl;
+
 	//Error handling
 	if (result != SUCCESS) {
 		cout << webBible.error(result) << endl;
 		return 0;
 	}
+
 	verse.display();
 
 	//Print the rest of the required verses if necessarry
-	Ref currentRef = ref.next();
+	Ref currentRef = ref;
 	Verse currentVerse;
 		if (multiple) {			
 			for (int i = 1; i < v2; i++) { // i = 1 becase one verse has already been displayed
