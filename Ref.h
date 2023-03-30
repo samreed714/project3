@@ -33,7 +33,6 @@ public:
    bool operator!=(const Ref);
    // OPTIONAL: < and > comparisons for Ref objects might also be useful
 
-   //bool operator>(const Ref& r2);
    // REQUIRED: Display the reference on cout, example output: John 3:16
    void display();
    // Your version of display should show the book name

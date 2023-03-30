@@ -1,15 +1,8 @@
 // Bible class function definitions
 // Computer Science, MVNU
 
-#include "Ref.h"
-#include "Verse.h"
 #include "Bible.h" 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
-#include <map>
+
 using namespace std;
 
 Bible::Bible() { // Default constructor
@@ -21,7 +14,13 @@ Bible::Bible() { // Default constructor
 }
 
 // Constructor – pass bible filename
-Bible::Bible(const string s) { infile = s; }
+Bible::Bible(const string s) { 
+	infile = s;
+	ifstream stream;
+	map<string, int> mp;
+	bool isOpen = false;
+	bool generated = false;
+}
 
 //Make map
 void Bible::generateMap() {
@@ -47,6 +46,10 @@ void Bible::generateMap() {
 	stream.close();
 }
 
+bool Bible::isGenerated()
+{
+	return generated;
+}
 
 // REQUIRED: lookup finds a given verse in this Bible
 Verse Bible::lookup(Ref ref, LookupResult& status) { 
